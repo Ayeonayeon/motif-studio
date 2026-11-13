@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOTIF — Your melody, your music</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f5f4f1;
+      color: #182235;
+      font-family: -apple-system, sans-serif;
+    }
+    header {
+      background: #17243a;
+      color: white;
+      padding: 20px 7%;
+      font-size: 21px;
+      font-weight: bold;
+      letter-spacing: 3px;
+    }
+    header small {
+      display: block;
+      font-size: 9px;
+      color: #aeb8ca;
+      letter-spacing: 2px;
+    }
+    main {
+      max-width: 900px;
+      margin: 55px auto;
+      padding: 20px;
+    }
+    .eyebrow {
+      color: #8c83d9;
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: bold;
+    }
+    h1 { font-size: 32px; }
+    .description {
+      color: #788294;
+      line-height: 1.8;
+    }
+    .panel {
+      margin-top: 30px;
+      padding: 25px;
+      background: white;
+      border: 1px solid #e7e8ec;
+      border-radius: 16px;
+    }
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 9px;
+      background: #17243a;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #eeedf8;
+      color: #625ba8;
+    }
+    input { display: none; }
+    audio { width: 100%; margin-top: 20px; }
+    #status {
+      margin-top: 15px;
+      color: #788294;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    MOTIF
+    <small>YOUR MELODY, YOUR MUSIC</small>
+  </header>
+
+  <main>
+    <div class="eyebrow">MELODY WORKSPACE</div>
+    <h1>머릿속 멜로디를,<br>눈앞의 음악으로.</h1>
+    <p class="description">
+      흥얼거린 멜로디를 기록하고 분석하세요.<br>
+      음악의 창작자는 언제나 당신입니다.
+    </p>
+
+    <section class="panel">
+      <h2>나의 멜로디</h2>
+      <p class="description">
+        새로운 멜로디를 녹음하거나 오디오 파일을 불러오세요.
+      </p>
+
+      <button id="record">● 녹음 시작</button>
+      <button id="stop" class="secondary" disabled>녹음 종료</button>
+
+      <p style="margin-top:20px">
+        <label for="file" class="secondary">
+          <button class="secondary" type="button"
+            onclick="document.getElementById('file').click()">
+            오디오 파일 불러오기
+          </button>
+        </label>
+        <input id="file" type="file" accept="audio/*">
+      </p>
+
+      <audio id="audio" controls></audio>
+      <div id="status">녹음 전입니다.</div>
+    </section>
+  </main>
+
+  <script>
+    const record = document.getElementById('record');
+    const stop = document.getElementById('stop');
+    const audio = document.getElementById('audio');
+    const status = document.getElementById('status');
+    const file = document.getElementById('file');
+
+    let recorder;
+    let stream;
+    let chunks = [];
+
+    record.onclick = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: true
+        });
+
+        chunks = [];
+        recorder = new MediaRecorder(stream);
+
+        recorder.ondataavailable = e => {
+          if (e.data.size) chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, {
+            type: recorder.mimeType
+          });
+          audio.src = URL.createObjectURL(blob);
+          stream.getTracks().forEach(t => t.stop());
+          status.textContent = '녹음이 완료되었습니다.';
+        };
+
+        recorder.start();
+        record.disabled = true;
+        stop.disabled = false;
+        status.textContent = '녹음 중입니다.';
+      } catch (error) {
+        status.textContent = '마이크 권한을 확인해주세요.';
+      }
+    };
+
+    stop.onclick = () => {
+      recorder.stop();
+      record.disabled = false;
+      stop.disabled = true;
+    };
+
+    file.onchange = () => {
+      if (file.files[0]) {
+        audio.src = URL.createObjectURL(file.files[0]);
+        status.textContent = '오디오 파일을 불러왔습니다.';
+      }
+    };
+  </script>
+</body>
+</html>
