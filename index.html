@@ -2,168 +2,550 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MOTIF — Your melody, your music</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #f5f4f1;
-      color: #182235;
-      font-family: -apple-system, sans-serif;
-    }
-    header {
-      background: #17243a;
-      color: white;
-      padding: 20px 7%;
-      font-size: 21px;
-      font-weight: bold;
-      letter-spacing: 3px;
-    }
-    header small {
-      display: block;
-      font-size: 9px;
-      color: #aeb8ca;
-      letter-spacing: 2px;
-    }
-    main {
-      max-width: 900px;
-      margin: 55px auto;
-      padding: 20px;
-    }
-    .eyebrow {
-      color: #8c83d9;
-      font-size: 12px;
-      letter-spacing: 2px;
-      font-weight: bold;
-    }
-    h1 { font-size: 32px; }
-    .description {
-      color: #788294;
-      line-height: 1.8;
-    }
-    .panel {
-      margin-top: 30px;
-      padding: 25px;
-      background: white;
-      border: 1px solid #e7e8ec;
-      border-radius: 16px;
-    }
-    button {
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 9px;
-      background: #17243a;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    button.secondary {
-      background: #eeedf8;
-      color: #625ba8;
-    }
-    input { display: none; }
-    audio { width: 100%; margin-top: 20px; }
-    #status {
-      margin-top: 15px;
-      color: #788294;
-      font-size: 13px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f6f2">
+<title>MOTIF — Melody Studio</title>
+<style>
+:root {
+  --bg:#f7f6f2;
+  --panel:#fff;
+  --ink:#20243a;
+  --muted:#85899b;
+  --line:#e9e8e4;
+  --purple:#8275c9;
+  --purple-light:#eeeafd;
+  --teal:#4b9c99;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+header {
+  height:68px;
+  padding:0 6%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.75);
+}
+.logo {font-size:21px;font-weight:800;letter-spacing:3px}
+.logo span {color:var(--purple)}
+.header-note {font-size:11px;color:var(--muted);letter-spacing:1px}
+main {max-width:1050px;margin:42px auto;padding:0 22px 70px}
+.eyebrow {font-size:11px;letter-spacing:2px;color:var(--purple);font-weight:700}
+h1 {font-size:32px;margin:10px 0 8px;letter-spacing:-1px}
+.subtitle {color:var(--muted);font-size:14px;line-height:1.7}
+.panel {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:24px;
+  margin-top:24px;
+}
+.panel-title {font-size:15px;font-weight:750;margin-bottom:7px}
+.panel-desc {font-size:12px;color:var(--muted);line-height:1.6}
+.controls {display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+button,.file-label {
+  border:0;border-radius:10px;padding:12px 17px;
+  font-size:13px;font-weight:650;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.primary {background:var(--ink);color:white}
+.secondary {background:var(--purple-light);color:#6255a6}
+.ghost {background:#f2f2f0;color:var(--ink)}
+button:disabled {opacity:.4;cursor:not-allowed}
+.file-label {background:#f2f2f0;color:var(--ink)}
+input[type=file] {display:none}
+.status {
+  margin-top:17px;font-size:12px;color:var(--muted);
+  min-height:18px;line-height:1.6;
+}
+audio {width:100%;margin-top:18px;height:42px}
+.result-head {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;
+}
+.count {font-size:12px;color:var(--muted)}
+.timeline-wrap {
+  margin-top:22px;overflow-x:auto;padding-bottom:8px;
+}
+.timeline {
+  position:relative;height:230px;min-width:100%;
+  background:
+    repeating-linear-gradient(to bottom,
+      transparent 0,transparent 32px,#eeedf1 33px);
+  border:1px solid var(--line);border-radius:10px;
+}
+.timeline-inner {position:relative;height:100%;min-width:100%}
+.note {
+  position:absolute;height:19px;border-radius:5px;
+  background:#8b7bd0;border:1px solid #7666bd;
+  min-width:4px;overflow:hidden;
+  color:white;font-size:10px;padding:2px 4px;
+  white-space:nowrap;
+}
+.axis {
+  display:flex;justify-content:space-between;
+  font-size:10px;color:var(--muted);margin-top:8px;
+}
+.note-table {width:100%;border-collapse:collapse;margin-top:22px;font-size:12px}
+.note-table th {
+  color:var(--muted);font-weight:600;text-align:left;
+  padding:11px 8px;border-bottom:1px solid var(--line);
+}
+.note-table td {padding:12px 8px;border-bottom:1px solid #f0efed}
+.pitch {font-weight:750;color:#6c5db3}
+.confidence {color:var(--teal)}
+.empty {
+  padding:35px 10px;text-align:center;color:var(--muted);
+  font-size:13px;line-height:1.8;
+}
+.legend {display:flex;gap:15px;flex-wrap:wrap;margin-top:14px}
+.legend span {font-size:11px;color:var(--muted)}
+.dot {display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.notice {
+  background:#f7f5ff;border-radius:10px;padding:13px 15px;
+  font-size:11px;line-height:1.7;color:#70669e;margin-top:17px;
+}
+footer {text-align:center;color:#a4a5ad;font-size:10px;margin-top:35px}
+@media(max-width:600px) {
+  main {margin-top:30px;padding:0 15px 50px}
+  h1 {font-size:27px}
+  .panel {padding:18px}
+  header {padding:0 18px}
+  .header-note {font-size:9px}
+  .note-table {font-size:11px}
+}
+</style>
 </head>
 <body>
-  <header>
-    MOTIF
-    <small>YOUR MELODY, YOUR MUSIC</small>
-  </header>
+<header>
+  <div class="logo">MOT<span>IF</span></div>
+  <div class="header-note">YOUR MELODY, YOUR MUSIC</div>
+</header>
 
-  <main>
-    <div class="eyebrow">MELODY WORKSPACE</div>
-    <h1>머릿속 멜로디를,<br>눈앞의 음악으로.</h1>
-    <p class="description">
-      흥얼거린 멜로디를 기록하고 분석하세요.<br>
-      음악의 창작자는 언제나 당신입니다.
-    </p>
+<main>
+  <div class="eyebrow">MELODY WORKSPACE · 01</div>
+  <h1>당신의 멜로디를 기록하세요.</h1>
+  <div class="subtitle">
+    흥얼거린 멜로디를 녹음하면 음높이와 음표 길이를 분석합니다.<br>
+    음악의 창작과 편곡은 온전히 당신의 몫입니다.
+  </div>
 
-    <section class="panel">
-      <h2>나의 멜로디</h2>
-      <p class="description">
-        새로운 멜로디를 녹음하거나 오디오 파일을 불러오세요.
-      </p>
+  <section class="panel">
+    <div class="panel-title">01. 오디오 입력</div>
+    <div class="panel-desc">마이크로 직접 녹음하거나 기존 오디오 파일을 불러오세요.</div>
+    <div class="controls">
+      <button class="primary" id="recordBtn">● 녹음 시작</button>
+      <button class="secondary" id="stopBtn" disabled>녹음 종료</button>
+      <label class="file-label" for="audioFile">파일 불러오기</label>
+      <input id="audioFile" type="file" accept="audio/*">
+    </div>
+    <div class="status" id="status">아직 입력된 오디오가 없습니다.</div>
+    <audio id="player" controls hidden></audio>
+    <div class="controls">
+      <button class="primary" id="analyzeBtn" disabled>음정 분석하기</button>
+    </div>
+    <div class="notice">
+      분석은 현재 사용 중인 기기의 브라우저에서 수행됩니다.
+      녹음 파일을 별도의 서버로 전송하지 않습니다.
+    </div>
+  </section>
 
-      <button id="record">● 녹음 시작</button>
-      <button id="stop" class="secondary" disabled>녹음 종료</button>
+  <section class="panel">
+    <div class="result-head">
+      <div>
+        <div class="panel-title">02. 멜로디 분석</div>
+        <div class="panel-desc">추출된 음표를 시간 순서대로 표시합니다.</div>
+      </div>
+      <div class="count" id="noteCount">분석 전</div>
+    </div>
 
-      <p style="margin-top:20px">
-        <label for="file" class="secondary">
-          <button class="secondary" type="button"
-            onclick="document.getElementById('file').click()">
-            오디오 파일 불러오기
-          </button>
-        </label>
-        <input id="file" type="file" accept="audio/*">
-      </p>
+    <div id="empty" class="empty">
+      아직 분석 결과가 없습니다.<br>
+      먼저 멜로디를 녹음하거나 파일을 불러오세요.
+    </div>
 
-      <audio id="audio" controls></audio>
-      <div id="status">녹음 전입니다.</div>
-    </section>
-  </main>
+    <div id="results" hidden>
+      <div class="timeline-wrap">
+        <div class="timeline" id="timeline">
+          <div class="timeline-inner" id="timelineInner"></div>
+        </div>
+        <div class="axis" id="axis"></div>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:#8b7bd0"></i>추출된 음표</span>
+        <span>세로 위치: 음높이</span>
+        <span>가로 길이: 지속 시간</span>
+      </div>
+      <table class="note-table">
+        <thead>
+          <tr>
+            <th>순서</th><th>음이름</th><th>시작</th>
+            <th>길이</th><th>신뢰도</th>
+          </tr>
+        </thead>
+        <tbody id="noteRows"></tbody>
+      </table>
+    </div>
+  </section>
+  <footer>MOTIF · MELODY STUDIO</footer>
+</main>
 
-  <script>
-    const record = document.getElementById('record');
-    const stop = document.getElementById('stop');
-    const audio = document.getElementById('audio');
-    const status = document.getElementById('status');
-    const file = document.getElementById('file');
+<script>
+const recordBtn = document.getElementById("recordBtn");
+const stopBtn = document.getElementById("stopBtn");
+const fileInput = document.getElementById("audioFile");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const player = document.getElementById("player");
+const statusEl = document.getElementById("status");
 
-    let recorder;
-    let stream;
-    let chunks = [];
+let recorder = null;
+let chunks = [];
+let audioBlob = null;
+let audioContext = null;
 
-    record.onclick = async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: true
+function setStatus(message) {
+  statusEl.textContent = message;
+}
+
+function getSupportedMimeType() {
+  if (!window.MediaRecorder) return "";
+  const types = [
+    "audio/mp4",
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/ogg;codecs=opus"
+  ];
+  return types.find(type => MediaRecorder.isTypeSupported(type)) || "";
+}
+
+recordBtn.addEventListener("click", async () => {
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error("이 브라우저에서 마이크 녹음을 지원하지 않습니다. Safari에서 다시 시도해 주세요.");
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    chunks = [];
+    const mimeType = getSupportedMimeType();
+    recorder = new MediaRecorder(stream, mimeType ? {mimeType} : {});
+    recorder.ondataavailable = event => {
+      if (event.data.size > 0) chunks.push(event.data);
+    };
+    recorder.onstop = () => {
+      audioBlob = new Blob(chunks, {type:recorder.mimeType || "audio/webm"});
+      player.src = URL.createObjectURL(audioBlob);
+      player.hidden = false;
+      analyzeBtn.disabled = false;
+      setStatus("녹음이 완료되었습니다. 재생하거나 음정 분석을 시작하세요.");
+      stream.getTracks().forEach(track => track.stop());
+    };
+    recorder.start();
+    recordBtn.disabled = true;
+    stopBtn.disabled = false;
+    setStatus("녹음 중입니다. 멜로디를 흥얼거려 주세요.");
+  } catch(error) {
+    setStatus("마이크를 사용할 수 없습니다: " + error.message);
+  }
+});
+
+stopBtn.addEventListener("click", () => {
+  if (recorder && recorder.state !== "inactive") {
+    recorder.stop();
+    recordBtn.disabled = false;
+    stopBtn.disabled = true;
+  }
+});
+
+fileInput.addEventListener("change", event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  audioBlob = file;
+  player.src = URL.createObjectURL(file);
+  player.hidden = false;
+  analyzeBtn.disabled = false;
+  setStatus("파일을 불러왔습니다: " + file.name);
+  document.getElementById("empty").hidden = false;
+  document.getElementById("results").hidden = true;
+  document.getElementById("noteCount").textContent = "분석 전";
+});
+
+function median(values) {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((a,b) => a-b);
+  return sorted[Math.floor(sorted.length/2)];
+}
+
+// YIN 기반 기본 주파수 추정
+function detectPitch(buffer, sampleRate) {
+  const size = buffer.length;
+  const minHz = 70;
+  const maxHz = 1000;
+  const minTau = Math.floor(sampleRate / maxHz);
+  const maxTau = Math.min(Math.floor(sampleRate / minHz), Math.floor(size/2)-1);
+
+  const difference = new Float32Array(maxTau + 1);
+  for (let tau=minTau; tau<=maxTau; tau++) {
+    let sum = 0;
+    for (let i=0; i<size-maxTau; i++) {
+      const delta = buffer[i] - buffer[i+tau];
+      sum += delta * delta;
+    }
+    difference[tau] = sum;
+  }
+
+  const cmnd = new Float32Array(maxTau + 1);
+  cmnd[0] = 1;
+  let runningSum = 0;
+  for (let tau=1; tau<=maxTau; tau++) {
+    runningSum += difference[tau];
+    cmnd[tau] = runningSum === 0 ? 1 : difference[tau] * tau / runningSum;
+  }
+
+  let selected = -1;
+  const threshold = 0.15;
+  for (let tau=minTau; tau<=maxTau; tau++) {
+    if (cmnd[tau] < threshold) {
+      while (tau+1<=maxTau && cmnd[tau+1]<cmnd[tau]) tau++;
+      selected = tau;
+      break;
+    }
+  }
+
+  if (selected === -1) {
+    let best = Infinity;
+    for (let tau=minTau; tau<=maxTau; tau++) {
+      if (cmnd[tau] < best) {
+        best = cmnd[tau];
+        selected = tau;
+      }
+    }
+    if (best > 0.35) return null;
+  }
+
+  const left = selected > minTau ? cmnd[selected-1] : cmnd[selected];
+  const center = cmnd[selected];
+  const right = selected < maxTau ? cmnd[selected+1] : cmnd[selected];
+  const denominator = 2 * (2*center-left-right);
+  const adjustment = denominator === 0 ? 0 : (right-left)/denominator;
+  const refinedTau = selected + adjustment;
+  const frequency = sampleRate / refinedTau;
+
+  if (!Number.isFinite(frequency) || frequency < minHz || frequency > maxHz) return null;
+
+  return {
+    frequency,
+    clarity: Math.max(0, Math.min(1, 1-center))
+  };
+}
+
+function frequencyToMidi(frequency) {
+  return Math.round(69 + 12 * Math.log2(frequency/440));
+}
+
+function midiName(midi) {
+  const names = ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
+  return names[((midi % 12)+12)%12] + (Math.floor(midi/12)-1);
+}
+
+async function analyzeAudio() {
+  if (!audioBlob) return;
+
+  analyzeBtn.disabled = true;
+  setStatus("오디오를 분석하고 있습니다...");
+  document.getElementById("empty").hidden = false;
+  document.getElementById("empty").textContent = "음높이를 추출하고 있습니다...";
+  document.getElementById("results").hidden = true;
+
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error("이 브라우저는 오디오 분석을 지원하지 않습니다.");
+
+    if (!audioContext) audioContext = new AudioContextClass();
+    await audioContext.resume();
+
+    const arrayBuffer = await audioBlob.arrayBuffer();
+    const decoded = await audioContext.decodeAudioData(arrayBuffer);
+    const sampleRate = decoded.sampleRate;
+
+    // 여러 채널을 모노로 합산
+    const channelCount = decoded.numberOfChannels;
+    const length = decoded.length;
+    const mono = new Float32Array(length);
+    for (let channel=0; channel<channelCount; channel++) {
+      const data = decoded.getChannelData(channel);
+      for (let i=0; i<length; i++) mono[i] += data[i] / channelCount;
+    }
+
+    const frameSize = 2048;
+    const hopSize = 512;
+    const frames = [];
+
+    for (let start=0; start+frameSize<=length; start+=hopSize) {
+      const frame = mono.slice(start, start+frameSize);
+      let energy = 0;
+      for (let i=0; i<frame.length; i++) energy += frame[i]*frame[i];
+      const rms = Math.sqrt(energy/frame.length);
+
+      if (rms < 0.012) {
+        frames.push({time:(start+frameSize/2)/sampleRate,midi:null,clarity:0});
+        continue;
+      }
+
+      // 프레임 경계의 영향을 줄이기 위한 Hann window
+      for (let i=0; i<frameSize; i++) {
+        const window = 0.5 - 0.5*Math.cos(2*Math.PI*i/(frameSize-1));
+        frame[i] *= window;
+      }
+
+      const result = detectPitch(frame, sampleRate);
+      if (!result) {
+        frames.push({time:(start+frameSize/2)/sampleRate,midi:null,clarity:0});
+      } else {
+        frames.push({
+          time:(start+frameSize/2)/sampleRate,
+          midi:frequencyToMidi(result.frequency),
+          clarity:result.clarity
         });
-
-        chunks = [];
-        recorder = new MediaRecorder(stream);
-
-        recorder.ondataavailable = e => {
-          if (e.data.size) chunks.push(e.data);
-        };
-
-        recorder.onstop = () => {
-          const blob = new Blob(chunks, {
-            type: recorder.mimeType
-          });
-          audio.src = URL.createObjectURL(blob);
-          stream.getTracks().forEach(t => t.stop());
-          status.textContent = '녹음이 완료되었습니다.';
-        };
-
-        recorder.start();
-        record.disabled = true;
-        stop.disabled = false;
-        status.textContent = '녹음 중입니다.';
-      } catch (error) {
-        status.textContent = '마이크 권한을 확인해주세요.';
       }
-    };
+    }
 
-    stop.onclick = () => {
-      recorder.stop();
-      record.disabled = false;
-      stop.disabled = true;
-    };
+    // 짧은 튐을 완화하는 중앙값 필터
+    const smoothed = frames.map((frame,index) => {
+      if (frame.midi === null) return frame;
+      const nearby = frames.slice(Math.max(0,index-2),Math.min(frames.length,index+3))
+        .filter(item => item.midi !== null)
+        .map(item => item.midi);
+      return {...frame,midi:median(nearby)};
+    });
 
-    file.onchange = () => {
-      if (file.files[0]) {
-        audio.src = URL.createObjectURL(file.files[0]);
-        status.textContent = '오디오 파일을 불러왔습니다.';
+    // 같은 음높이의 연속 프레임을 하나의 음표로 묶기
+    const events = [];
+    let current = null;
+    const frameDuration = hopSize/sampleRate;
+
+    for (const frame of smoothed) {
+      if (frame.midi === null) {
+        if (current) {
+          current.end = frame.time;
+          events.push(current);
+          current = null;
+        }
+        continue;
       }
-    };
-  </script>
+
+      if (!current || current.midi !== frame.midi) {
+        if (current) {
+          current.end = frame.time;
+          events.push(current);
+        }
+        current = {
+          midi:frame.midi,
+          start:Math.max(0,frame.time-frameDuration/2),
+          end:frame.time+frameDuration/2,
+          clarity:frame.clarity,
+          samples:1
+        };
+      } else {
+        current.end = frame.time+frameDuration/2;
+        current.clarity += frame.clarity;
+        current.samples++;
+      }
+    }
+    if (current) events.push(current);
+
+    // 너무 짧은 검출은 제거
+    const notes = events
+      .filter(note => note.end-note.start >= 0.075)
+      .map(note => ({
+        ...note,
+        duration:note.end-note.start,
+        confidence:note.clarity/note.samples
+      }));
+
+    renderResults(notes, decoded.duration);
+    setStatus("분석이 완료되었습니다. 실제 허밍과 결과를 비교해 보세요.");
+  } catch(error) {
+    console.error(error);
+    setStatus("분석 중 오류가 발생했습니다: " + error.message);
+    document.getElementById("empty").textContent =
+      "오디오를 분석하지 못했습니다. 다른 파일이나 짧은 녹음으로 다시 시도해 주세요.";
+  } finally {
+    analyzeBtn.disabled = false;
+  }
+}
+
+function renderResults(notes, duration) {
+  const empty = document.getElementById("empty");
+  const results = document.getElementById("results");
+  const count = document.getElementById("noteCount");
+
+  empty.hidden = true;
+  results.hidden = false;
+  count.textContent = notes.length + "개 음표 추출";
+
+  const inner = document.getElementById("timelineInner");
+  const axis = document.getElementById("axis");
+  const rows = document.getElementById("noteRows");
+  inner.innerHTML = "";
+  axis.innerHTML = "";
+  rows.innerHTML = "";
+
+  if (!notes.length) {
+    empty.hidden = false;
+    results.hidden = true;
+    empty.textContent = "뚜렷한 음높이를 찾지 못했습니다. 조금 더 또렷하고 일정하게 허밍해 보세요.";
+    count.textContent = "0개 음표";
+    return;
+  }
+
+  const minMidi = Math.min(...notes.map(n=>n.midi));
+  const maxMidi = Math.max(...notes.map(n=>n.midi));
+  const minDisplay = minMidi - 2;
+  const maxDisplay = maxMidi + 2;
+  const totalWidth = Math.max(100, duration * 85);
+  inner.style.width = totalWidth + "px";
+  document.getElementById("timeline").style.width = totalWidth + "px";
+
+  const height = 230;
+  notes.forEach((note,index) => {
+    const block = document.createElement("div");
+    block.className = "note";
+    const x = note.start/duration*totalWidth;
+    const w = Math.max(5,note.duration/duration*totalWidth);
+    const y = height - ((note.midi-minDisplay)/(maxDisplay-minDisplay))*height - 10;
+    block.style.left = x + "px";
+    block.style.top = Math.max(2,Math.min(height-20,y)) + "px";
+    block.style.width = w + "px";
+    block.textContent = midiName(note.midi);
+    block.title = midiName(note.midi) + " · " + note.start.toFixed(2) + "초";
+    inner.appendChild(block);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index+1}</td>
+      <td class="pitch">${midiName(note.midi)}</td>
+      <td>${note.start.toFixed(2)}초</td>
+      <td>${note.duration.toFixed(2)}초</td>
+      <td class="confidence">${Math.round(note.confidence*100)}%</td>
+    `;
+    rows.appendChild(row);
+  });
+
+  const marks = Math.min(8,Math.ceil(duration/2));
+  for (let i=0;i<=marks;i++) {
+    const span = document.createElement("span");
+    span.textContent = (duration*i/marks).toFixed(1)+"s";
+    axis.appendChild(span);
+  }
+}
+
+analyzeBtn.addEventListener("click", analyzeAudio);
+</script>
 </body>
 </html>
